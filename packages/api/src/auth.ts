@@ -4,12 +4,12 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@repo/db";
  
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
-  secret: process.env.BETTER_AUTH_SECRET as string,
+  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  secret: process.env.BETTER_AUTH_SECRET ?? "",
   socialProviders: {
     discord: {
-      clientId: process.env.DISCORD_CLIENT_ID as unknown as string,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET as unknown as string,
+      clientId: process.env.DISCORD_CLIENT_ID ?? "",
+      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? "",
     },
   },
   database: prismaAdapter(prisma, {
