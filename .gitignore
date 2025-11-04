@@ -48,3 +48,7 @@ yarn-error.log*
 
 # node_modules (all workspaces)
 **/node_modules
+
+#dist
+**/dist
+**/generated
