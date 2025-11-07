@@ -5,6 +5,9 @@
   "files": [
     "tsconfig.json"
   ],
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules"
+  },
   "exports": {
     ".": "./tsconfig.json"
   }

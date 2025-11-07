@@ -3,12 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**",
-        "*.tsbuildinfo"
-      ],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "*.tsbuildinfo"],
       "env": [
         "DATABASE_URL",
         "DIRECT_URL",
@@ -33,6 +28,9 @@
     },
     "dev": {
       "persistent": true,
+      "cache": false
+    },
+    "clean": {
       "cache": false
     }
   }

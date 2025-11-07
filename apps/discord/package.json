@@ -16,7 +16,8 @@
     "rabbitmq:start:mac": "brew services start rabbitmq",
     "rabbitmq:stop:mac": "brew services stop rabbitmq",
     "rabbitmq:start:linux": "sudo systemctl start rabbitmq-server",
-    "rabbitmq:stop:linux": "sudo systemctl stop rabbitmq-server"
+    "rabbitmq:stop:linux": "sudo systemctl stop rabbitmq-server",
+    "clean": "rm -rf .turbo node_modules"
   },
   "keywords": [],
   "author": "",

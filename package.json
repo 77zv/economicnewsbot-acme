@@ -6,6 +6,7 @@
   "scripts": {
     "build": "turbo run build",
     "check-types": "tsc --noEmit",
+    "clean:workspaces": "turbo run clean",
     "dev": "turbo run dev",
     "postinstall": "prisma generate --schema=packages/db/src/schema.prisma",
     "lint": "turbo run lint",
