@@ -3,16 +3,11 @@
  * for Docker builds.
  */
 await import("@repo/env");
+import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-  
-  outputFileTracingIncludes: {
-    '/api/**/*': ['./node_modules/.prisma/client/**/*'],
-    '/*': ['./node_modules/.prisma/client/**/*'],
-  },
-  
   // App Router is enabled by default in Next.js 13.4+
 
   /**
@@ -20,6 +15,13 @@ const config = {
    * For internationalization with App Router, see:
    * https://nextjs.org/docs/app/building-your-application/routing/internationalization
    */
+  
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.plugins = [...config.plugins, new PrismaPlugin()];
+    }
+    return config;
+  },
 };
 
 export default config;
