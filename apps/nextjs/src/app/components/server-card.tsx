@@ -49,7 +49,6 @@ export default function ServerCard({
                   <img
                     src={iconUrl}
                     alt={`${name} icon`}
-                    fill
                     className="object-cover"
                   />
                 ) : (

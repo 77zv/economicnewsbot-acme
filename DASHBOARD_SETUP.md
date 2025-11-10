@@ -111,6 +111,7 @@ The existing schema supports this feature:
 
 ### tRPC Routes
 
+#### Queries
 ```typescript
 // Get all user's guilds with bot status
 guild.getMyGuilds.useQuery()
@@ -122,28 +123,112 @@ guild.getGuildDetails.useQuery({ guildId: "123..." })
 guild.getGuildSchedules.useQuery({ guildId: "123..." })
 ```
 
+#### Mutations
+```typescript
+// Create a new schedule
+guild.createSchedule.useMutation({
+  guildId: "...",
+  channelId: "...",
+  hour: 9,
+  minute: 0,
+  timeZone: Timezone.DEFAULT,
+  newsScope: NewsScope.DAILY,
+  frequency: Frequency.DAILY,
+  market: Market.FOREX,
+  impact: [Impact.HIGH, Impact.MEDIUM],
+  currency: [Currency.USD, Currency.EUR],
+  timeDisplay: TimeDisplay.FIXED,
+})
+
+// Update an existing schedule
+guild.updateSchedule.useMutation({
+  guildId: "...",
+  scheduleId: "...",
+  // Any schedule fields to update
+  hour: 10,
+  impact: [Impact.HIGH],
+})
+
+// Delete a schedule
+guild.deleteSchedule.useMutation({
+  guildId: "...",
+  scheduleId: "...",
+})
+```
+
+## Schedule Management (IMPLEMENTED)
+
+### Create Schedule
+- **Form Component**: `schedule-form.tsx` with React Hook Form
+- **Validation**: Zod schema validation for all fields
+- **Features**:
+  - Channel ID input with validation
+  - Time selection (hour 0-23, minute 0-59)
+  - Timezone dropdown with all available zones
+  - Frequency selection (DAILY, WEEKDAYS, WEEKENDS, WEEKLY)
+  - Market selection (FOREX, CRYPTO, ENERGY, METAL, STOCK)
+  - Multi-select impact levels (LOW, MEDIUM, HIGH, HOLIDAY)
+  - Multi-select currencies (USD, EUR, GBP, JPY, etc.)
+  - Time display preference (FIXED, RELATIVE)
+  - News scope (DAILY, WEEKLY, TOMORROW)
+
+### Edit Schedule
+- Pre-fills form with existing schedule data
+- Uses same form component as create
+- Updates schedule via tRPC mutation
+- Auto-refreshes data on success
+
+### Delete Schedule
+- Two-click confirmation to prevent accidental deletion
+- Loading state during deletion
+- Auto-refreshes schedule list
+- 3-second auto-cancel for safety
+
+### Schedule Table
+- **Responsive table layout** displaying:
+  - Time (formatted HH:MM)
+  - Timezone badge
+  - Frequency
+  - Market badge
+  - Impact levels (multiple badges)
+  - Currencies (shows first 3 + count)
+  - Action buttons (Edit/Delete)
+- Hover effects and transitions
+- Empty state with helpful message
+
+### Modal System
+- Backdrop with blur effect
+- Keyboard support (ESC to close)
+- Click outside to close
+- Smooth animations with Framer Motion
+- Prevents body scroll when open
+- Responsive sizing
+
 ## Next Steps / Future Enhancements
 
-1. **Schedule Management**
-   - Implement create schedule form
-   - Implement edit schedule functionality
-   - Implement delete schedule with confirmation
-
-2. **Real-time Updates**
+1. **Real-time Updates**
    - Add refresh button or auto-refresh
    - Show bot online status
    - Display last schedule execution time
 
-3. **Advanced Features**
+2. **Advanced Features**
    - Bulk schedule operations
    - Schedule templates
+   - Import/Export schedules
+   - Schedule duplication
    - Server settings page
    - Bot configuration options
 
-4. **Permissions**
+3. **Permissions**
    - Fine-grained permission checks
    - Role-based access within servers
    - Audit logs for schedule changes
+
+4. **UI Improvements**
+   - Toast notifications instead of alerts
+   - Better error handling UI
+   - Schedule preview before creation
+   - Bulk actions for schedules
 
 ## Testing
 

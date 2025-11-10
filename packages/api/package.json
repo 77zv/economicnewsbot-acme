@@ -9,9 +9,15 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./src/root": {
+      "import": "./dist/root.js",
+      "types": "./dist/root.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -w -p tsconfig.json",
@@ -19,15 +25,18 @@
     "clean": "rm -rf .turbo node_modules"
   },
   "dependencies": {
-    "@repo/db": "workspace:*",
-    "dayjs": "^1.11.13",
+    "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.4.1",
-    "better-auth": "^1.2.3"
+    "@repo/db": "workspace:*",
+    "@trpc/server": "^10.34.0",
+    "better-auth": "^1.2.3",
+    "dayjs": "^1.11.13",
+    "react-hook-form": "^7.66.0",
+    "superjson": "^1.13.1",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
-    "typescript": "^5.6.3",
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "^5.6.3"
   }
 }
-
-

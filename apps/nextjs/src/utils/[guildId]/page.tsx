@@ -1,23 +1,95 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import Nav from "../../../components/nav";
-import Footer from "../../../components/footer";
-import { api } from "../../../../utils/api";
-import { useSession } from "../../../../lib/auth-client";
-import { useEffect } from "react";
+import Nav from "../../app/components/nav";
+import Footer from "../../app/components/footer";
+import Modal from "../../app/components/modal";
+import ScheduleForm from "../../app/components/schedule-form";
+import ScheduleTable from "../../app/components/schedule-table";
+import { api } from "../api";
+import { useSession } from "../../lib/auth-client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import type { Schedule } from "@repo/db";
 
 export default function ServerDetailPage() {
   const params = useParams();
   const router = useRouter();
   const guildId = params.guildId as string;
   const { data: session, isPending } = useSession();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null);
   
+  const utils = api.useUtils();
   const { data: guildDetails, isLoading, error } = api.guild.getGuildDetails.useQuery(
     { guildId },
     { enabled: !!session && !!guildId }
   );
+
+  const createScheduleMutation = api.guild.createSchedule.useMutation({
+    onSuccess: () => {
+      utils.guild.getGuildDetails.invalidate({ guildId });
+      setIsModalOpen(false);
+      setEditingSchedule(null);
+    },
+    onError: (error) => {
+      alert(`Error creating schedule: ${error.message}`);
+    },
+  });
+
+  const updateScheduleMutation = api.guild.updateSchedule.useMutation({
+    onSuccess: () => {
+      utils.guild.getGuildDetails.invalidate({ guildId });
+      setIsModalOpen(false);
+      setEditingSchedule(null);
+    },
+    onError: (error) => {
+      alert(`Error updating schedule: ${error.message}`);
+    },
+  });
+
+  const deleteScheduleMutation = api.guild.deleteSchedule.useMutation({
+    onSuccess: () => {
+      utils.guild.getGuildDetails.invalidate({ guildId });
+    },
+    onError: (error) => {
+      alert(`Error deleting schedule: ${error.message}`);
+    },
+  });
+
+  const handleCreateSchedule = () => {
+    setEditingSchedule(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditSchedule = (schedule: Schedule) => {
+    setEditingSchedule(schedule);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteSchedule = (scheduleId: string) => {
+    deleteScheduleMutation.mutate({ guildId, scheduleId });
+  };
+
+  const handleSubmitForm = (data: any) => {
+    if (editingSchedule) {
+      updateScheduleMutation.mutate({
+        guildId,
+        scheduleId: editingSchedule.id,
+        ...data,
+      });
+    } else {
+      createScheduleMutation.mutate({
+        guildId,
+        ...data,
+      });
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingSchedule(null);
+  };
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -162,79 +234,48 @@ export default function ServerDetailPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">Schedules</h2>
-              <button className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors">
-                + Create Schedule
+              <button 
+                onClick={handleCreateSchedule}
+                className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Create Schedule
               </button>
             </div>
 
-            {schedules.length === 0 ? (
-              <div className="text-center py-12 bg-background-700 rounded-xl border border-background-600">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-background-600 mb-4">
-                  <svg
-                    className="w-8 h-8 text-background-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  No schedules yet
-                </h3>
-                <p className="text-background-400 mb-6">
-                  Create your first schedule to start receiving news updates
-                </p>
-              </div>
-            ) : (
-              <div className="grid gap-4">
-                {schedules.map((schedule) => (
-                  <div
-                    key={schedule.id}
-                    className="p-4 bg-background-700 rounded-lg border border-background-600 hover:border-primary-500 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="text-lg font-semibold text-white">
-                            {String(schedule.hour).padStart(2, "0")}:{String(schedule.minute).padStart(2, "0")}
-                          </span>
-                          <span className="px-2 py-1 bg-primary-500/20 text-primary-400 text-xs rounded-full border border-primary-500/30">
-                            {schedule.timeZone}
-                          </span>
-                          <span className="px-2 py-1 bg-secondary-500/20 text-secondary-400 text-xs rounded-full border border-secondary-500/30">
-                            {schedule.frequency}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-background-400">
-                          <span>Impact: {schedule.impact.join(", ")}</span>
-                          {schedule.currency.length > 0 && (
-                            <>
-                              <span>•</span>
-                              <span>Currency: {schedule.currency.join(", ")}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button className="px-3 py-2 text-background-400 hover:text-white transition-colors">
-                          Edit
-                        </button>
-                        <button className="px-3 py-2 text-red-400 hover:text-red-300 transition-colors">
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <ScheduleTable
+              schedules={schedules}
+              onEdit={handleEditSchedule}
+              onDelete={handleDeleteSchedule}
+              isDeleting={deleteScheduleMutation.isPending ? deleteScheduleMutation.variables?.scheduleId : null}
+            />
           </div>
+
+          {/* Schedule Modal */}
+          <Modal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            title={editingSchedule ? "Edit Schedule" : "Create New Schedule"}
+          >
+            <ScheduleForm
+              onSubmit={handleSubmitForm}
+              onCancel={handleCloseModal}
+              defaultValues={editingSchedule || undefined}
+              isLoading={createScheduleMutation.isPending || updateScheduleMutation.isPending}
+            />
+          </Modal>
         </div>
       </div>
       <Footer />
