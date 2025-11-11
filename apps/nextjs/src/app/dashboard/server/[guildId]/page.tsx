@@ -1,13 +1,13 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import Nav from "../../app/components/nav";
-import Footer from "../../app/components/footer";
-import Modal from "../../app/components/modal";
-import ScheduleForm from "../../app/components/schedule-form";
-import ScheduleTable from "../../app/components/schedule-table";
-import { api } from "../api";
-import { useSession } from "../../lib/auth-client";
+import Nav from "../../../components/nav";
+import Footer from "../../../components/footer";
+import Modal from "../../../components/modal";
+import ScheduleForm from "../../../components/schedule-form";
+import ScheduleTable from "../../../components/schedule-table";
+import { api } from "../../../../utils/api";
+import { useSession } from "../../../../lib/auth-client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { Schedule } from "@repo/db";
