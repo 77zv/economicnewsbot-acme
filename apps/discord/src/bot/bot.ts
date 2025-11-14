@@ -57,8 +57,24 @@ async function startBot() {
   // Load commands
   const foldersPath = path.join(__dirname, 'commands');
   const commandFolders = fs.readdirSync(foldersPath);
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   for (const folder of commandFolders) {
+    // In development mode: only load WIP commands
+    if (isDevelopment) {
+      if (folder !== 'wip') {
+        continue;
+      }
+      console.log('🚧 Loading work-in-progress commands only (development mode)...');
+    }
+    // In production mode: skip WIP commands
+    else {
+      if (folder === 'wip') {
+        console.log('⚠️  Skipping WIP commands in production mode');
+        continue;
+      }
+    }
+
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(fileExt));
     
@@ -68,6 +84,9 @@ async function startBot() {
       const command = await import(fileUrl);
       if ('data' in command && 'execute' in command) {
         client.commands.set(command.data.name, command);
+        if (folder === 'wip') {
+          console.log(`  ✓ Loaded WIP command: ${command.data.name}`);
+        }
       }
     }
   }

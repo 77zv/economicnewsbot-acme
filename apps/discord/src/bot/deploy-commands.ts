@@ -3,6 +3,7 @@ import { Collection,REST, Routes } from "discord.js";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { env } from "@repo/env";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,10 +15,26 @@ export async function deployCommands(clientId: string, token: string) {
   try {
     const foldersPath = path.join(__dirname, "commands");
     const commandFolders = fs.readdirSync(foldersPath);
+    const isDevelopment = process.env.NODE_ENV === 'development';
     
     const loadedCommands = new Collection<string, any>();
 
     for (const folder of commandFolders) {
+      // In development mode: only deploy WIP commands
+      if (isDevelopment) {
+        if (folder !== 'wip') {
+          continue;
+        }
+        console.log('🚧 Deploying work-in-progress commands only (development mode)...');
+      }
+      // In production mode: skip WIP commands
+      else {
+        if (folder === 'wip') {
+          console.log('⚠️  Skipping WIP commands deployment in production mode');
+          continue;
+        }
+      }
+
       const commandsPath = path.join(foldersPath, folder);
       const commandFiles = fs
         .readdirSync(commandsPath)
@@ -28,6 +45,9 @@ export async function deployCommands(clientId: string, token: string) {
         const command = await import(filePath);
         if ("data" in command && "execute" in command) {
           loadedCommands.set(command.data.name, command);
+          if (folder === 'wip') {
+            console.log(`  ✓ Deploying WIP command: ${command.data.name}`);
+          }
         } else {
           console.log(
             `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
@@ -58,9 +78,13 @@ export async function deployCommands(clientId: string, token: string) {
 }
 
 const main = async () => {
+  console.log('Deploying commands...');
+  console.log('DISCORD_CLIENT_ID:', env.DISCORD_CLIENT_ID);
+  console.log('DISCORD_TOKEN:', env.DISCORD_TOKEN);
+  console.log("--------------------------------");
   await deployCommands(
-    process.env.DISCORD_CLIENT_ID!,
-    process.env.DISCORD_TOKEN!,
+    env.DISCORD_CLIENT_ID!,
+    env.DISCORD_TOKEN!,
   );
   process.exit(0);
 };
