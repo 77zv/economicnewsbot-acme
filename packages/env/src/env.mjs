@@ -1,3 +1,14 @@
+/**
+ * @fileoverview Environment variable validation for the monorepo
+ * 
+ * ⚠️ WARNING: This package uses Node.js APIs (fileURLToPath, dirname, etc.)
+ * and should ONLY be imported in server-side code!
+ * 
+ * For client components that need Prisma types/enums:
+ * ✅ Use: import { ... } from "@repo/db/types"
+ * ❌ Don't use: import { ... } from "@repo/db" (imports Prisma client which imports this)
+ */
+
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 import { config } from "dotenv";
