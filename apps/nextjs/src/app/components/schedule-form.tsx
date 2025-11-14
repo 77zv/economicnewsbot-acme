@@ -12,7 +12,7 @@ import {
   Market,
   TimeDisplay,
   type Schedule
-} from "@repo/db";
+} from "@repo/db/types";
 
 const scheduleSchema = z.object({
   channelId: z.string().min(1, "Channel ID is required"),

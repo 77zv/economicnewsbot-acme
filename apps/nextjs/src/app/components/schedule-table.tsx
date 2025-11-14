@@ -1,6 +1,6 @@
 "use client";
 
-import type { Schedule } from "@repo/db";
+import type { Schedule } from "@repo/db/types";
 import { useState } from "react";
 
 interface ScheduleTableProps {

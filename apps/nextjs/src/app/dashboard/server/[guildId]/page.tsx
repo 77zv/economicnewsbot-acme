@@ -10,7 +10,7 @@ import { api } from "../../../../utils/api";
 import { useSession } from "../../../../lib/auth-client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import type { Schedule } from "@repo/db";
+import type { Schedule } from "@repo/db/types";
 
 export default function ServerDetailPage() {
   const params = useParams();
@@ -207,10 +207,9 @@ export default function ServerDetailPage() {
             <div className="flex items-center gap-4">
               <div className="relative w-20 h-20 rounded-full overflow-hidden bg-background-600 flex-shrink-0">
                 {guild.iconUrl ? (
-                  <Image
+                  <img
                     src={guild.iconUrl}
                     alt={`${guild.name} icon`}
-                    fill
                     className="object-cover"
                   />
                 ) : (
