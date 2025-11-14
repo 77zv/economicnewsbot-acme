@@ -214,6 +214,11 @@ packages/
 - `/delete-schedule` - Delete a specific schedule
 - `/delete-all-schedules` - Remove all schedules (with confirmation)
 
+### Work-in-Progress Commands (Development mode only)
+- `/ai-analysis` - Generate a comprehensive AI-powered forex market analysis for today (in French)
+
+> **Note:** In development mode (`NODE_ENV=development`), ONLY WIP commands are loaded. Public and admin commands are skipped to keep testing focused. In production, only public and admin commands are loaded.
+
 ### Command Options
 - `market` - Forex, Crypto, Energy, Metal
 - `currency` - USD, EUR, GBP, JPY, etc.
