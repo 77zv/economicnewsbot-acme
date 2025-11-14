@@ -6,8 +6,8 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Forex Factory Bot",
-  description: "Forex Factory Bot Website",
+  title: "Economic News Bot",
+  description: "Economic News Bot Website",
 };
 
 export default function RootLayout({
