@@ -24,6 +24,7 @@
     "@trpc/next": "^10.34.0",
     "@trpc/react-query": "^10.34.0",
     "@trpc/server": "^10.34.0",
+    "better-auth": "^1.2.3",
     "framer-motion": "^12.4.10",
     "next": "^15.2.1",
     "react": "^18.2.0",
