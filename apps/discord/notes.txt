@@ -2,16 +2,24 @@ Future Features
 
 FREE FEATURES:
 - Risk management tools (calculators for position size, stop loss, take profit, margin requirements, etc...)
-
-
 - Alerts just ahead of news and results when they drop
 
 PREMIUM FEATURES:
 - Trading AI (user prompts the bot with an trading (ICT have a model for ICT related stuff too and upcharge this shit) related question and it generates an answer)
 - Signal service (allows signal providers to send signals directly to channels straight from their trading accounts)
 - Copy trading (user can copy a trade from a bot or a user straight to their own account)
+
 - Stock watchlist with price alerts
-- Signal marketplace (allows signal providers to sell their signals to users. Users from other servers can buy signals from the marketplace and receive them in their own server)
+
 - Dividends calendar (allows users to get a calendar of all the dividends that are coming up in the next 30 days)
+
 - Portfolio tracker
+
+- AI Analysis on news drops
+
+On Website:
+- Signal marketplace (allows signal providers to sell their signals to users. Users from other servers can buy signals from the marketplace and receive them in their own server)
+
+What Trading Server Owners Need:
+
 
