@@ -6,20 +6,16 @@ FREE FEATURES:
 
 PREMIUM FEATURES:
 - Trading AI (user prompts the bot with an trading (ICT have a model for ICT related stuff too and upcharge this shit) related question and it generates an answer)
-- Signal service (allows signal providers to send signals directly to channels straight from their trading accounts)
 - Copy trading (user can copy a trade from a bot or a user straight to their own account)
-
 - Stock watchlist with price alerts
-
 - Dividends calendar (allows users to get a calendar of all the dividends that are coming up in the next 30 days)
-
 - Portfolio tracker
-
 - AI Analysis on news drops
 
 On Website:
-- Signal marketplace (allows signal providers to sell their signals to users. Users from other servers can buy signals from the marketplace and receive them in their own server)
+- Signal marketplace (allows signal providers to sell their signals to users. Users from other servers can buy signals from the marketplace and receive them in their own server) 
+-> Only available if you use the bots Signal Service so we can provide an accurate track record of profitability 
+-> The marketplace can act as a leaderboard for signal providers to compete with each other
 
-What Trading Server Owners Need:
-
-
+WHAT TRADING SERVER OWNERS NEED:
+- Signal service (allows signal providers to send signals directly to channels straight from their trading accounts)
