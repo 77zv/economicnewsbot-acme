@@ -8,9 +8,9 @@ import {
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
 } from "discord.js";
-import { getFormattedTime } from "../../utils/embedBuilder";
+import { getFormattedTime } from "../../utils/embedBuilder.js";
 import { ScheduleService } from "@repo/api";
-import { buildScheduleConfirmationEmbed } from "../../utils/scheduleEmbedBuilder";
+import { buildScheduleConfirmationEmbed } from "../../utils/scheduleEmbedBuilder.js";
 import { PermissionFlagsBits } from "discord.js";
 
 const scheduleService = ScheduleService.getInstance();

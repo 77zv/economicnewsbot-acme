@@ -1,5 +1,5 @@
 import "@repo/env";
-import { ScheduleService } from "@repo/api";
+import { ScheduleService, Schedule } from "@repo/api";
 import { NewsService } from "@repo/api";
 import { MessageBrokerService } from "@repo/messaging";
 import { Market, NewsScope } from "@repo/api";
@@ -67,7 +67,7 @@ class SchedulerProcess {
     }
   }
 
-  private async processSchedule(schedule: any): Promise<void> {
+  private async processSchedule(schedule: Schedule): Promise<void> {
     try {
       const news = await this.getNewsForSchedule(schedule);
       if (!news || news.length === 0) {
@@ -82,12 +82,12 @@ class SchedulerProcess {
     }
   }
 
-  private async getNewsForSchedule(schedule: any): Promise<any[]> {
+  private async getNewsForSchedule(schedule: Schedule): Promise<any[]> {
     const options = {
       market: schedule.market as Market,
-      currency: schedule.getCurrency(),
-      impact: schedule.getImpact(),
-      timezone: schedule.getTimeZone(),
+      currency: schedule.currency,
+      impact: schedule.impact,
+      timezone: schedule.timeZone,
     };
 
     switch (schedule.newsScope) {

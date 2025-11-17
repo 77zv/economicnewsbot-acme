@@ -1,8 +1,8 @@
 import "@repo/env";
 import cron from "node-cron";
-import { FetchNewsJob } from "./jobs/fetch-news.job";
-import { SendAlertsJob } from "./jobs/send-alerts.job";
-import { CleanupJob } from "./jobs/cleanup.job";
+import { FetchNewsJob } from "./jobs/fetch-news.job.js";
+import { SendAlertsJob } from "./jobs/send-alerts.job.js";
+import { CleanupJob } from "./jobs/cleanup.job.js";
 import { MessageBrokerService } from "@repo/messaging";
 
 class NewsWorkerProcess {

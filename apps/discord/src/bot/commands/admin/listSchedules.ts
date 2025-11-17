@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import { ScheduleService } from "@repo/api";
-import { buildScheduleListEmbed } from "../../utils/scheduleListEmbedBuilder";
+import { buildScheduleListEmbed } from "../../utils/scheduleListEmbedBuilder.js";
 import { PermissionFlagsBits } from "discord.js";
 
 const scheduleService = ScheduleService.getInstance();

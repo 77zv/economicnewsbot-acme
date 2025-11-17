@@ -5,6 +5,7 @@ export type {
   DiscordServer,
   DiscordChannel,
   Schedule,
+  NewsAlert,
 } from "@repo/db";
 
 export {
@@ -15,6 +16,7 @@ export {
   Frequency,
   Timezone,
   TimeDisplay,
+  AlertType,
 } from "@repo/db";
 
 export type News = {

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from "discord.js";
-import { Currency, Impact, Market, Timezone, NewsScope, Frequency, TimeDisplay } from '@repo/api';
+import { Currency, Impact, Market, Timezone, NewsScope, Frequency, TimeDisplay, AlertType } from '@repo/api';
 
 export class CommandBuilder {
   private command: SlashCommandBuilder;
@@ -182,6 +182,17 @@ export class CommandBuilder {
       option
         .setName("mention")
         .setDescription("Who to mention (@everyone or role ID)")
+        .setRequired(false)
+    );
+    return this;
+  }
+
+  addAlertTypeOption(): CommandBuilder {
+    const alertTypeOptions = Object.values(AlertType).join(', ');
+    this.command.addStringOption(option =>
+      option
+        .setName("alert_type")
+        .setDescription(`Alert timing options (comma-separated, e.g., ${alertTypeOptions})`)
         .setRequired(false)
     );
     return this;

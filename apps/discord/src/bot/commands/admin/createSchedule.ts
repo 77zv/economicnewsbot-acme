@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, ChannelType, PermissionFlagsBits } from "discord.js";
 import { ScheduleService } from "@repo/api";
-import { buildScheduleConfirmationEmbed } from "../../utils/scheduleEmbedBuilder";
-import { CommandBuilder } from "../../utils/CommandBuilder";
+import { buildScheduleConfirmationEmbed } from "../../utils/scheduleEmbedBuilder.js";
+import { CommandBuilder } from "../../utils/CommandBuilder.js";
 import {
   Timezone,
   NewsScope,

@@ -84,7 +84,7 @@ export class MessageBrokerService {
           const embeds = this.buildNewsEmbeds(
             news,
             `${market} News Update`,
-            (timeDisplay as TimeDisplay) ?? TimeDisplay.RELATIVE
+            (timeDisplay as TimeDisplay) ?? TimeDisplay.FIXED
           );
 
           for (const embed of embeds) {

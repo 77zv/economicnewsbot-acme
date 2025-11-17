@@ -6,16 +6,20 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// const ext = process.env.NODE_ENV === 'development' ? '.ts' : '.js';
-const ext = '.ts';
+// Determine extension based on whether we're running from src or dist
+const ext = __dirname.includes('/dist/') ? '.js' : '.ts';
 const botPath = path.join(__dirname, `bot${ext}`);
 
 console.log('DISCORD_TOKEN:', env.DISCORD_TOKEN ? '✓ Found' : '✗ Not found');
+console.log('Bot path:', botPath);
+
+// Only use tsx for TypeScript files
+const execArgv = ext === '.ts' ? ['--import', 'tsx'] : [];
 
 const manager = new ShardingManager(botPath, { 
   token: env.DISCORD_TOKEN,
   totalShards: "auto",
-  execArgv: ['--import', 'tsx']
+  execArgv
 });
 
 manager.on('shardCreate', shard => console.log(`Launched shard ${shard.id}`));
