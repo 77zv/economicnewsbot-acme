@@ -90,7 +90,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   } catch (error) {
     console.error('Error creating schedule:', error);
     await interaction.editReply({ 
-      content: `Failed to create schedule`, 
+      content: `Failed to create schedule: ${error instanceof Error ? error.message : 'Unknown error'}`, 
     });
   }
 }

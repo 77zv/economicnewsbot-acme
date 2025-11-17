@@ -86,7 +86,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   } catch (error) {
     console.error('Error editing schedule:', error);
     await interaction.editReply({ 
-      content: `Failed to edit schedule`
+      content: `Failed to edit schedule: ${error instanceof Error ? error.message : 'Unknown error'}`
     });
   }
 }

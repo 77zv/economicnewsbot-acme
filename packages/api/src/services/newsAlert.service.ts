@@ -64,6 +64,12 @@ export class NewsAlertService {
         return await this.updateNewsAlert(existingAlert.id, data);
       }
 
+      // Check if server already has 2 alerts
+      const existingAlerts = await this.newsAlertRepository.findByServerId(data.serverId);
+      if (existingAlerts.length >= 2) {
+        throw new Error(`Your server has reached the maximum limit of 2 alerts. Please delete an existing alert before creating a new one.`);
+      }
+
       const newsAlert = await this.newsAlertRepository.create(data);
       console.log(
         `News alert with id ${newsAlert.id} has been created for the server ${data.serverId}.`
@@ -71,7 +77,8 @@ export class NewsAlertService {
       return newsAlert;
     } catch (error) {
       console.error("Error creating news alert:", error);
-      throw new Error(`Failed to create news alert`);
+      // Re-throw the original error to preserve the error message
+      throw error;
     }
   }
 

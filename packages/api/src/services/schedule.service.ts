@@ -79,6 +79,12 @@ export class ScheduleService {
         return updatedSchedule.schedule;
       }
 
+      // Check if server already has 2 schedules
+      const existingSchedules = await this.scheduleRepository.findByServerId(data.serverId);
+      if (existingSchedules.length >= 2) {
+        throw new Error(`Your server has reached the maximum limit of 2 schedules. Please delete an existing schedule before creating a new one.`);
+      }
+
       const { hour: hourInServerTime, minute: minuteInServerTime } =
         this._convertToServerTime(data.hour, data.minute, data.timeZone);
 
@@ -95,7 +101,8 @@ export class ScheduleService {
       return schedule;
     } catch (error) {
       console.error("Error creating schedule:", error);
-      throw new Error(`Failed to create schedule`);
+      // Re-throw the original error to preserve the error message
+      throw error;
     }
   }
 
