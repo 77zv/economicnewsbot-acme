@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction } from "discord.js";
 import { Currency, Impact, Timezone, Market, parseEnumArray } from '@repo/api'
 import { newsService } from '@repo/api'
 import { buildNewsEmbed } from "../../utils/embedBuilder.js"
-import { CommandBuilder } from "../../utils/CommandBuilder.js"
+import { CommandBuilder } from "../../utils/commandBuilder.js"
 
 export const data = new CommandBuilder("week", "Get this week's news and events")
   .addMarketOption()

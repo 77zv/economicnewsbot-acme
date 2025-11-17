@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { grokService } from '@repo/api';
-import { CommandBuilder } from "../../utils/CommandBuilder.js";
+import { CommandBuilder } from "../../utils/commandBuilder.js";
 
 const SYSTEM_PROMPT = `You are an expert financial analyst and trader specializing in forex and economic calendar analysis.
 

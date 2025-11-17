@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, PermissionFlagsBits, EmbedBuilder } from "discord.js";
 import { NewsAlertService, AlertType } from "@repo/api";
-import { CommandBuilder } from "../../utils/CommandBuilder.js";
+import { CommandBuilder } from "../../utils/commandBuilder.js";
 
 const newsAlertService = NewsAlertService.getInstance();
 
