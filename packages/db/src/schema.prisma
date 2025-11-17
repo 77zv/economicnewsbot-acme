@@ -126,16 +126,12 @@ model NewsEvent {
   impact      Impact
   forecast    String      @default("") // Can be empty string
   previous    String      @default("") // Can be empty string
-  actual      String?     // Populated when news drops
   source      String      @default("ForexFactory")
-  isProcessed Boolean     @default(false) // Whether the actual value has been released
 
   @@unique([title, date, impact, currency])
   @@index([date])
   @@index([currency])
   @@index([impact])
-  @@index([isProcessed])
-  @@index([date, isProcessed]) // Composite index for querying upcoming/unprocessed events
 }
 
 model NewsAlert {
