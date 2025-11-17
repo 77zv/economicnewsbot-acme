@@ -1,0 +1,35 @@
+{
+  "name": "news-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "clean": "rm -rf .turbo node_modules dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/node-cron": "^3.0.11",
+    "eslint": "^9.14.0",
+    "prettier": "3.3.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "@repo/api": "workspace:*",
+    "@repo/messaging": "workspace:*",
+    "@repo/env": "workspace:*",
+    "@repo/db": "workspace:*"
+  }
+}
+

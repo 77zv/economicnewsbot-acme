@@ -18,7 +18,10 @@
     "bot:scheduler": "pnpm --filter discord-bot start:scheduler",
     "bot:all": "pnpm --filter discord-bot start:all",
     "bot:deploy": "pnpm --filter discord-bot discord:deploy",
-    "dev:scheduler": "pnpm --filter discord-bot dev:scheduler"
+    "dev:scheduler": "pnpm --filter discord-bot dev:scheduler",
+    "worker:dev": "pnpm --filter news-worker dev",
+    "worker:start": "pnpm --filter news-worker start",
+    "worker:build": "pnpm --filter news-worker build"
   },
   "devDependencies": {
     "@prisma/client": "^6.4.1",
