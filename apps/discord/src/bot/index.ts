@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Determine extension based on whether we're running from src or dist
-const ext = __dirname.includes('/dist/') ? '.js' : '.ts';
+const ext = __dirname.includes('dist') ? '.js' : '.ts';
 const botPath = path.join(__dirname, `bot${ext}`);
 
 console.log('DISCORD_TOKEN:', env.DISCORD_TOKEN ? '✓ Found' : '✗ Not found');
