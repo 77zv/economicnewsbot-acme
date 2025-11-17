@@ -1,4 +1,4 @@
-import type { Schedule } from "../models";
+import type { Schedule } from "../models/index.js";
 import prisma from "@repo/db";
 
 export type CreateScheduleDTO = Omit<

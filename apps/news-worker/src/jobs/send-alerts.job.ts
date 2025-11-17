@@ -1,7 +1,7 @@
 import { prisma } from "@repo/db";
 import { Impact, Currency } from "@repo/api";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
+import utc from "dayjs/plugin/utc.js";
 import { MessageBrokerService } from "@repo/messaging";
 
 dayjs.extend(utc);

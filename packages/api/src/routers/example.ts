@@ -4,7 +4,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "../trpc";
+} from "../trpc.js";
 
 export const exampleRouter = createTRPCRouter({
   hello: publicProcedure

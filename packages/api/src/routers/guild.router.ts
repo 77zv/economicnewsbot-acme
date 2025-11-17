@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { DiscordService } from "../services/discord.service";
-import { ScheduleService } from "../services/schedule.service";
+import { createTRPCRouter, protectedProcedure } from "../trpc.js";
+import { DiscordService } from "../services/discord.service.js";
+import { ScheduleService } from "../services/schedule.service.js";
 import { 
   Timezone, 
   NewsScope, 

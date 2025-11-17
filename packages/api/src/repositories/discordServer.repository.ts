@@ -1,5 +1,5 @@
 import prisma from "@repo/db";
-import type { DiscordServer} from '../models'
+import type { DiscordServer} from '../models/index.js'
 
 export type CreateDiscordServerDTO = Omit<DiscordServer, 'id' | 'createdAt' | 'updatedAt'>
 export type UpdateDiscordServerDTO = Partial<CreateDiscordServerDTO>

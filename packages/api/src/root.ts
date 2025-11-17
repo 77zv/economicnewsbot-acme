@@ -1,6 +1,6 @@
-import { exampleRouter } from "./routers/example";
-import { guildRouter } from "./routers/guild.router";
-import { createTRPCRouter } from "./trpc";
+import { exampleRouter } from "./routers/example.js";
+import { guildRouter } from "./routers/guild.router.js";
+import { createTRPCRouter } from "./trpc.js";
 
 /**
  * This is the primary router for your server.
