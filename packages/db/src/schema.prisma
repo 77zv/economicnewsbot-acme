@@ -80,16 +80,18 @@ model DiscordServer {
   guildId   String           @unique
   schedules Schedule[]
   channels  DiscordChannel[]
+  newsAlerts NewsAlert[]
 }
 
 model DiscordChannel {
-  id        String        @id @default(uuid())
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  channelId String        @unique // Discord channel id
-  serverId  String
-  server    DiscordServer @relation(fields: [serverId], references: [guildId])
-  schedules Schedule[]
+  id         String      @id @default(uuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  channelId  String      @unique // Discord channel id
+  serverId   String
+  server     DiscordServer @relation(fields: [serverId], references: [guildId])
+  schedules  Schedule[]
+  newsAlerts NewsAlert[]
 }
 
 model Schedule {
@@ -111,6 +113,46 @@ model Schedule {
   server           DiscordServer  @relation(fields: [serverId], references: [guildId])
   channelId        String
   channel          DiscordChannel @relation(fields: [channelId], references: [channelId])
+  @@unique([channelId, serverId, timeZone, hour, minute, newsScope, frequency, market, impact, currency]) // Prevent duplicate alerts
+}
+
+model NewsEvent {
+  id          String      @id @default(uuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  title       String
+  currency    Currency    // Currency code from API (e.g., "USD", "EUR")
+  date        DateTime    // When the news event occurs (ISO format from API)
+  impact      Impact
+  forecast    String      @default("") // Can be empty string
+  previous    String      @default("") // Can be empty string
+  actual      String?     // Populated when news drops
+  source      String      @default("ForexFactory")
+  isProcessed Boolean     @default(false) // Whether the actual value has been released
+
+  @@unique([title, date, impact, currency])
+  @@index([date])
+  @@index([currency])
+  @@index([impact])
+  @@index([isProcessed])
+  @@index([date, isProcessed]) // Composite index for querying upcoming/unprocessed events
+}
+
+model NewsAlert {
+  id             String        @id @default(uuid())
+  createdAt      DateTime      @default(now())
+  serverId       String
+  server         DiscordServer @relation(fields: [serverId], references: [guildId])
+  channelId      String
+  channel        DiscordChannel @relation(fields: [channelId], references: [channelId])
+  impact         Impact[]
+  currency       Currency[]
+  alertType      AlertType[]
+
+
+  @@unique([ serverId, channelId]) // Prevent duplicate alerts
+  @@index([channelId])
+  @@index([serverId])
 }
 
 enum Market {
@@ -185,4 +227,9 @@ enum Timezone {
 enum TimeDisplay {
   FIXED
   RELATIVE
+}
+
+enum AlertType {
+  FIVE_MINUTES_BEFORE
+  ON_NEWS_DROP
 }
