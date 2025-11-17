@@ -220,16 +220,13 @@ packages/
 
 **Schedule Management:**
 - `/create-schedule` - Create an automated news schedule
-- `/list-schedules` - View all schedules for your server
+- `/list-schedules` - View all schedules with interactive delete buttons 🗑️
 - `/edit-schedule` - Modify an existing schedule
-- `/delete-schedule` - Delete a specific schedule
-- `/delete-all-schedules` - Remove all schedules (with confirmation)
 
 **Alert Management:**
 - `/create-alert` - Set up real-time news alerts for this channel
-- `/list-alerts` - View all alerts for your server
+- `/list-alerts` - View all alerts with interactive delete buttons 🗑️
 - `/edit-alert` - Modify an existing alert configuration
-- `/delete-alert` - Remove a specific alert
 
 ### Work-in-Progress Commands (Development mode only)
 - `/ai-analysis` - Generate a comprehensive AI-powered forex market analysis for today (in French)
