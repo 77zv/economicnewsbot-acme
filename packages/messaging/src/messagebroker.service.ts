@@ -9,6 +9,7 @@ export class MessageBrokerService {
   private connection: Awaited<ReturnType<typeof amqp.connect>> | null = null;
   private channel: Awaited<ReturnType<Awaited<ReturnType<typeof amqp.connect>>['createChannel']>> | null = null;
   private readonly QUEUE_NAME = 'schedule_tasks';
+  private readonly NEWS_ALERT_QUEUE = 'news_alerts';
 
   public static getInstance(): MessageBrokerService {
     if (!MessageBrokerService.instance) {
@@ -25,6 +26,7 @@ export class MessageBrokerService {
       const conn = await amqp.connect(url);
       const ch = await conn.createChannel();
       await ch.assertQueue(this.QUEUE_NAME, { durable: true });
+      await ch.assertQueue(this.NEWS_ALERT_QUEUE, { durable: true });
       this.connection = conn;
       this.channel = ch;
     } catch (error) {
@@ -226,6 +228,43 @@ export class MessageBrokerService {
         }
       }
     });
+  }
+
+  public publishNewsAlert(alertData: {
+    title: string;
+    country: string;
+    impact: string;
+    date: string;
+    forecast: string;
+    previous: string;
+    alertType: string;
+    channelId: string;
+    serverId: string;
+  }): void {
+    if (!this.channel) {
+      throw new Error('RabbitMQ channel not initialized');
+    }
+
+    this.channel.sendToQueue(
+      this.NEWS_ALERT_QUEUE,
+      Buffer.from(JSON.stringify(alertData)),
+      { persistent: true }
+    );
+  }
+
+  public async disconnect(): Promise<void> {
+    try {
+      if (this.channel) {
+        await this.channel.close();
+        this.channel = null;
+      }
+      if (this.connection) {
+        await this.connection.close();
+        this.connection = null;
+      }
+    } catch (error) {
+      console.error('Error disconnecting from RabbitMQ:', error);
+    }
   }
 
   public async close(): Promise<void> {
