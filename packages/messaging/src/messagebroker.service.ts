@@ -40,6 +40,7 @@ export class MessageBrokerService {
       await this.connect();
       console.log('Connected to RabbitMQ');
 
+      // Start schedule tasks consumer
       await this.consumeScheduleTasks(async (message) => {
         const { serverId, channelId, news: rawNews, market, timeDisplay } = message as { serverId: string; channelId: string; news: News[]; market: Market; timeDisplay: TimeDisplay };
 
@@ -99,7 +100,10 @@ export class MessageBrokerService {
         }
       });
 
-      console.log('Message consumer started');
+      console.log('✓ Schedule tasks consumer started');
+
+      // Start news alerts consumer
+      await this.consumeNewsAlerts(client);
     } catch (error) {
       console.error('Failed to start consumer:', error);
       throw error;
@@ -126,11 +130,23 @@ export class MessageBrokerService {
     );
   }
 
-  private buildNewsEmbeds(news: News[], title: string, timeDisplay: TimeDisplay): EmbedBuilder[] {
+  private buildNewsEmbeds(news: News[], title: string, timeDisplay: TimeDisplay, alertType?: string): EmbedBuilder[] {
+    // Determine title and color based on alert type
+    let embedTitle = title;
+    let embedColor = 0x02ebf7; // Default cyan color
+
+    if (alertType === 'FIVE_MINUTES_BEFORE') {
+      embedTitle = '🔔 NEWS IN 5 MINUTES';
+      embedColor = 0xFF6600; // Neon orange
+    } else if (alertType === 'ON_NEWS_DROP') {
+      embedTitle = '🚨 NEWS DROPPING RIGHT NOW';
+      embedColor = 0xFF1744; // Neon red
+    }
+
     if (news.length === 0) {
       const embed = new EmbedBuilder()
-        .setTitle(title)
-        .setColor(0x02ebf7)
+        .setTitle(embedTitle)
+        .setColor(embedColor)
         .setDescription('No news found for the specified criteria.')
         .setFooter({ text: 'Powered by ForexFactory' });
       return [embed];
@@ -161,8 +177,8 @@ export class MessageBrokerService {
 
     for (let page = 0; page < totalPages; page++) {
       const embed = new EmbedBuilder()
-        .setTitle(`${title}${totalPages > 1 ? ` (Page ${page + 1}/${totalPages})` : ''}`)
-        .setColor(0x02ebf7)
+        .setTitle(`${embedTitle}${totalPages > 1 ? ` (Page ${page + 1}/${totalPages})` : ''}`)
+        .setColor(embedColor)
         .setFooter({ text: 'Powered by ForexFactory' });
 
       const startIdx = page * MAX_FIELDS_PER_EMBED;
@@ -250,6 +266,80 @@ export class MessageBrokerService {
       Buffer.from(JSON.stringify(alertData)),
       { persistent: true }
     );
+  }
+
+  public async consumeNewsAlerts(client: Client): Promise<void> {
+    if (!this.channel) {
+      throw new Error('RabbitMQ channel not initialized');
+    }
+
+    await this.channel.consume(this.NEWS_ALERT_QUEUE, async (msg: amqp.ConsumeMessage | null) => {
+      if (msg) {
+        try {
+          const alert = JSON.parse(msg.content.toString()) as {
+            title: string;
+            country: string;
+            impact: string;
+            date: string;
+            forecast: string;
+            previous: string;
+            alertType: string;
+            channelId: string;
+            serverId: string;
+          };
+
+          // Get guild and channel
+          const guild = await client.guilds.fetch(alert.serverId);
+          if (!guild) {
+            console.warn(`Guild ${alert.serverId} not found - acknowledging message`);
+            this.channel?.ack(msg);
+            return;
+          }
+
+          const channel = (await guild.channels.fetch(alert.channelId)) as TextChannel;
+          if (!channel) {
+            console.warn(`Channel ${alert.channelId} not found - acknowledging message`);
+            this.channel?.ack(msg);
+            return;
+          }
+
+          const permissions = channel.permissionsFor(client.user!);
+          if (!permissions?.has('SendMessages')) {
+            console.warn(`Bot lacks permission in channel ${alert.channelId} - acknowledging message`);
+            this.channel?.ack(msg);
+            return;
+          }
+
+          // Build embed for single news item
+          const news = [{
+            title: alert.title,
+            country: alert.country as Currency,
+            impact: alert.impact as Impact,
+            date: alert.date,
+            forecast: alert.forecast,
+            previous: alert.previous,
+          }];
+
+          // Use default TimeDisplay.RELATIVE for alerts
+          const embeds = this.buildNewsEmbeds(news, '', TimeDisplay.RELATIVE, alert.alertType);
+
+          // Send embed (buildNewsEmbeds always returns at least one embed)
+          const embed = embeds[0];
+          if (embed) {
+            await channel.send({ embeds: [embed] });
+            console.log(`✓ Sent ${alert.alertType} alert for "${alert.title}" to channel ${alert.channelId}`);
+          }
+
+          this.channel?.ack(msg);
+        } catch (error) {
+          console.error('Error processing news alert:', error);
+          // Reject and requeue
+          this.channel?.nack(msg, false, true);
+        }
+      }
+    });
+
+    console.log('✓ News alerts consumer started');
   }
 
   public async disconnect(): Promise<void> {
