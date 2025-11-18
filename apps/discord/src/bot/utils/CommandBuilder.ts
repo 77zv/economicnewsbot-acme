@@ -173,6 +173,16 @@ export class CommandBuilder {
     return this;
   }
 
+  addRoleOption(): CommandBuilder {
+    this.command.addRoleOption(option =>
+      option
+        .setName("role")
+        .setDescription("Role to mention when sending notifications")
+        .setRequired(false)
+    );
+    return this;
+  }
+
   addAlertTypeOption(): CommandBuilder {
     const alertTypeOptions = Object.values(AlertType).join(', ');
     this.command.addStringOption(option =>

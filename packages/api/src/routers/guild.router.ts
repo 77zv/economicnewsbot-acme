@@ -152,6 +152,7 @@ export const guildRouter = createTRPCRouter({
         impact: z.array(z.nativeEnum(Impact)),
         currency: z.array(z.nativeEnum(Currency)),
         timeDisplay: z.nativeEnum(TimeDisplay),
+        roleId: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -184,6 +185,7 @@ export const guildRouter = createTRPCRouter({
           impact: input.impact,
           currency: input.currency,
           timeDisplay: input.timeDisplay,
+          roleId: input.roleId ?? null,
         });
 
         return schedule;
@@ -215,6 +217,7 @@ export const guildRouter = createTRPCRouter({
         impact: z.array(z.nativeEnum(Impact)).optional(),
         currency: z.array(z.nativeEnum(Currency)).optional(),
         timeDisplay: z.nativeEnum(TimeDisplay).optional(),
+        roleId: z.string().optional().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {

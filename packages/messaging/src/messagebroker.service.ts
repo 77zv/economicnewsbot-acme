@@ -41,7 +41,7 @@ export class MessageBrokerService {
 
       // Start schedule tasks consumer
       await this.consumeScheduleTasks(async (message) => {
-        const { serverId, channelId, news: rawNews, market } = message as { serverId: string; channelId: string; news: News[]; market: Market };
+        const { serverId, channelId, news: rawNews, market, roleId } = message as { serverId: string; channelId: string; news: News[]; market: Market; roleId?: string };
 
         try {
           const guild = await client.guilds.fetch(serverId);
@@ -85,9 +85,12 @@ export class MessageBrokerService {
             `${market} News Update`
           );
 
+          // Build message content with role mention if provided
+          const messageContent = roleId ? `<@&${roleId}>` : undefined;
+
           for (const embed of embeds) {
             try {
-              await channel.send({ embeds: [embed] });
+              await channel.send({ content: messageContent, embeds: [embed] });
             } catch (error) {
               console.error(`Failed to send embed to channel ${channelId}:`, error);
               continue;
@@ -119,6 +122,7 @@ export class MessageBrokerService {
       channelId: schedule.channelId,
       news,
       market: schedule.market,
+      roleId: schedule.roleId,
     };
 
     this.channel.sendToQueue(
@@ -271,6 +275,7 @@ export class MessageBrokerService {
     alertType: string;
     channelId: string;
     serverId: string;
+    roleId?: string;
   }): void {
     if (!this.channel) {
       throw new Error('RabbitMQ channel not initialized');
@@ -343,10 +348,13 @@ export class MessageBrokerService {
           // Build embeds for alerts
           const embeds = this.buildNewsEmbeds(news, '', alertData.alertType);
 
+          // Build message content with role mention if provided
+          const messageContent = alertData.roleId ? `<@&${alertData.roleId}>` : undefined;
+
           // Send embed (buildNewsEmbeds always returns at least one embed)
           const embed = embeds[0];
           if (embed) {
-            await channel.send({ embeds: [embed] });
+            await channel.send({ content: messageContent, embeds: [embed] });
             const eventCount = news.length;
             const eventText = eventCount === 1 ? `"${news[0].title}"` : `${eventCount} events`;
             console.log(`✓ Sent ${alertData.alertType} alert for ${eventText} to channel ${alertData.channelId}`);

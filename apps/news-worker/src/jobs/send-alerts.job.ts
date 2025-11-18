@@ -167,6 +167,7 @@ export class SendAlertsJob {
             alertType: alertType,
             channelId: config.channelId,
             serverId: config.serverId,
+            roleId: config.roleId ?? undefined,
           });
 
           // Mark all events as sent

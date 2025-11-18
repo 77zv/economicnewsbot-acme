@@ -109,6 +109,7 @@ model Schedule {
   market           Market
   impact           Impact[]
   currency         Currency[]
+  roleId           String?        // Optional Discord role ID to mention
   serverId         String
   server           DiscordServer  @relation(fields: [serverId], references: [guildId])
   channelId        String
@@ -144,6 +145,7 @@ model NewsAlert {
   impact         Impact[]
   currency       Currency[]
   alertType      AlertType[]
+  roleId         String?       // Optional Discord role ID to mention
 
 
   @@unique([ serverId, channelId]) // Prevent duplicate alerts

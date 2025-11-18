@@ -9,6 +9,7 @@ export const data = new CommandBuilder("create-alert", "Create a news alert for 
   .addImpactOption()
   .addCurrencyOption()
   .addAlertTypeOption()
+  .addRoleOption()
   .build();
 
 export async function execute(interaction: ChatInputCommandInteraction) {
@@ -26,6 +27,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const impact = interaction.options.get("impact")?.value as string || "";
   const currency = interaction.options.get("currency")?.value as string || "";
   const alertType = interaction.options.get("alert_type")?.value as string || "";
+  const role = interaction.options.getRole("role");
+  const roleId = role?.id || null;
 
   const currencies = parseEnumArray(currency, Object.values(Currency));
   const impacts = parseEnumArray(impact, Object.values(Impact));
@@ -61,6 +64,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       impact: impacts,
       currency: currencies,
       alertType: alertTypes,
+      roleId
     });
 
     const embed = buildAlertConfirmationEmbed(alert);

@@ -25,6 +25,7 @@ export const data = new CommandBuilder("create-schedule", "Create a new schedule
   .addImpactOption()
   .addCurrencyOption()
   .addMarketOption()
+  .addRoleOption()
   .build();
 
 export async function execute(interaction: ChatInputCommandInteraction) {
@@ -47,6 +48,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   const market = interaction.options.get("market")?.value as Market || Market.FOREX;
   const hour = interaction.options.get("hour")?.value as string;
   const minute = interaction.options.get("minute")?.value as string;
+  const role = interaction.options.getRole("role");
+  const roleId = role?.id || null;
 
   const currencies = parseEnumArray(currency, Object.values(Currency));
   const impacts = parseEnumArray(impact, Object.values(Impact));
@@ -81,7 +84,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
       market,
       hour: parseInt(hour),
       minute: parseInt(minute),
-      timeDisplay: TimeDisplay.FIXED
+      timeDisplay: TimeDisplay.FIXED,
+      roleId
     });
 
     const embed = buildScheduleConfirmationEmbed(schedule, "Created");
