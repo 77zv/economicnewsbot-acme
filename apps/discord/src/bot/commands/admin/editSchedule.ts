@@ -45,6 +45,49 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
 
     const scheduleId = interaction.options.get("id")?.value as string;
+    
+    // Fetch the schedule to check its channel
+    const existingSchedule = await scheduleService.getScheduleById(scheduleId);
+    if (!existingSchedule) {
+      await interaction.editReply({
+        content: "❌ Schedule not found.",
+      });
+      return;
+    }
+    
+    // Check if bot has required permissions in the schedule's channel
+    try {
+      const channel = await interaction.guild?.channels.fetch(existingSchedule.channelId);
+      if (channel && channel.isTextBased()) {
+        const botMember = interaction.guild?.members.me;
+        const botPermissions = channel.permissionsFor(botMember!);
+        
+        const requiredPermissions = [
+          PermissionFlagsBits.ViewChannel,
+          PermissionFlagsBits.SendMessages,
+          PermissionFlagsBits.EmbedLinks
+        ];
+        
+        const missingPermissions = requiredPermissions.filter(perm => !botPermissions?.has(perm));
+        
+        if (missingPermissions.length > 0) {
+          const permissionNames = missingPermissions.map(perm => {
+            if (perm === PermissionFlagsBits.ViewChannel) return "👁️ View Channel";
+            if (perm === PermissionFlagsBits.SendMessages) return "💬 Send Messages";
+            if (perm === PermissionFlagsBits.EmbedLinks) return "🔗 Embed Links";
+            return "Unknown";
+          });
+          
+          await interaction.editReply({
+            content: `### ❌ Missing Permissions\n\nI need the following permissions in <#${existingSchedule.channelId}> to send scheduled news:\n\n${permissionNames.map(name => `> ${name}`).join('\n')}\n\n*Please enable these permissions and try again.*`,
+          });
+          return;
+        }
+      }
+    } catch (error) {
+      // Channel might have been deleted, let the edit proceed anyway
+      console.warn(`Could not fetch channel ${existingSchedule.channelId} for permission check:`, error);
+    }
     const hour = interaction.options.get("hour")?.value as number;
     const minute = interaction.options.get("minute")?.value as number;
     

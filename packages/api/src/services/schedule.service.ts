@@ -265,6 +265,15 @@ export class ScheduleService {
     }
   }
 
+  public async getScheduleById(id: string): Promise<Schedule | null> {
+    try {
+      return await this.scheduleRepository.findById(id);
+    } catch (error) {
+      console.error("Error getting schedule by id:", error);
+      throw new Error(`Failed to get schedule with id ${id}`);
+    }
+  }
+
   private async _checkServerExists(
     serverId: string
   ): Promise<DiscordServer | null> {

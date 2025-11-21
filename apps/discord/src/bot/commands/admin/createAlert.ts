@@ -55,6 +55,36 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     return;
   }
 
+  // Check if bot has required permissions in this channel
+  const channel = interaction.channel;
+  if (channel) {
+    const botMember = interaction.guild?.members.me;
+    const botPermissions = channel.permissionsFor(botMember!);
+    
+    const requiredPermissions = [
+      PermissionFlagsBits.ViewChannel,
+      PermissionFlagsBits.SendMessages,
+      PermissionFlagsBits.EmbedLinks
+    ];
+    
+    const missingPermissions = requiredPermissions.filter(perm => !botPermissions?.has(perm));
+    
+    if (missingPermissions.length > 0) {
+      const permissionNames = missingPermissions.map(perm => {
+        if (perm === PermissionFlagsBits.ViewChannel) return "👁️ View Channel";
+        if (perm === PermissionFlagsBits.SendMessages) return "💬 Send Messages";
+        if (perm === PermissionFlagsBits.EmbedLinks) return "🔗 Embed Links";
+        return "Unknown";
+      });
+      
+      await interaction.reply({
+        content: `### ❌ Missing Permissions\n\nI need the following permissions in this channel to send news alerts:\n\n${permissionNames.map(name => `> ${name}`).join('\n')}\n\n*Please enable these permissions and try again.*`,
+        ephemeral: true,
+      });
+      return;
+    }
+  }
+
   try {
     await interaction.deferReply({ ephemeral: true });
 

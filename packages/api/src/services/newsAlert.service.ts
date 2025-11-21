@@ -102,6 +102,15 @@ export class NewsAlertService {
     }
   }
 
+  public async getNewsAlertById(id: string): Promise<NewsAlert | null> {
+    try {
+      return await this.newsAlertRepository.findById(id);
+    } catch (error) {
+      console.error("Error getting news alert by id:", error);
+      throw new Error(`Failed to get news alert with id ${id}`);
+    }
+  }
+
   public async updateNewsAlert(
     id: string,
     data: UpdateNewsAlertDTO

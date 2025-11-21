@@ -63,6 +63,49 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   try {
     await interaction.deferReply({ ephemeral: true });
 
+    // Fetch the alert to check its channel
+    const existingAlert = await newsAlertService.getNewsAlertById(alertId);
+    if (!existingAlert) {
+      await interaction.editReply({
+        content: "❌ Alert not found.",
+      });
+      return;
+    }
+    
+    // Check if bot has required permissions in the alert's channel
+    try {
+      const channel = await interaction.guild?.channels.fetch(existingAlert.channelId);
+      if (channel && channel.isTextBased()) {
+        const botMember = interaction.guild?.members.me;
+        const botPermissions = channel.permissionsFor(botMember!);
+        
+        const requiredPermissions = [
+          PermissionFlagsBits.ViewChannel,
+          PermissionFlagsBits.SendMessages,
+          PermissionFlagsBits.EmbedLinks
+        ];
+        
+        const missingPermissions = requiredPermissions.filter(perm => !botPermissions?.has(perm));
+        
+        if (missingPermissions.length > 0) {
+          const permissionNames = missingPermissions.map(perm => {
+            if (perm === PermissionFlagsBits.ViewChannel) return "👁️ View Channel";
+            if (perm === PermissionFlagsBits.SendMessages) return "💬 Send Messages";
+            if (perm === PermissionFlagsBits.EmbedLinks) return "🔗 Embed Links";
+            return "Unknown";
+          });
+          
+          await interaction.editReply({
+            content: `### ❌ Missing Permissions\n\nI need the following permissions in <#${existingAlert.channelId}> to send news alerts:\n\n${permissionNames.map(name => `> ${name}`).join('\n')}\n\n*Please enable these permissions and try again.*`,
+          });
+          return;
+        }
+      }
+    } catch (error) {
+      // Channel might have been deleted, let the edit proceed anyway
+      console.warn(`Could not fetch channel ${existingAlert.channelId} for permission check:`, error);
+    }
+
     const updatedAlert = await newsAlertService.updateNewsAlert(alertId, updateData);
 
     const alertTypes = updatedAlert.alertType.map((type: string) => {
